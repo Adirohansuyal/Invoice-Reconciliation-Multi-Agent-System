@@ -345,4 +345,10 @@ This project is licensed under the MIT License - see the [LICENSE](LICENSE) file
 
 ---
 
-*Built with ❤️ using LangGraph and modern AI technologies*
+
+
+## Screenshots
+
+![Screenshot 1](Photos/Screenshot%202026-01-29%20at%209.17.10%E2%80%AFPM.png)
+![Screenshot 2](Photos/Screenshot%202026-01-29%20at%209.17.26%E2%80%AFPM.png)
+![Screenshot 3](Photos/Screenshot%202026-01-29%20at%209.17.39%E2%80%AFPM.png)
