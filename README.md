@@ -348,7 +348,6 @@ This project is licensed under the MIT License - see the [LICENSE](LICENSE) file
 
 
 ## Screenshots
-
-![Screenshot 1](Photos/Screenshot%202026-01-29%20at%209.17.10%E2%80%AFPM.png)
-![Screenshot 2](Photos/Screenshot%202026-01-29%20at%209.17.26%E2%80%AFPM.png)
-![Screenshot 3](Photos/Screenshot%202026-01-29%20at%209.17.39%E2%80%AFPM.png)
+![Screenshot 4](Photos/Screenshot%202026-01-29%20at%209.21.43%E2%80%AFPM.png)
+![Screenshot 5](Photos/Screenshot%202026-01-29%20at%209.21.52%E2%80%AFPM.png)
+![Screenshot 6](Photos/Screenshot%202026-01-29%20at%209.22.13%E2%80%AFPM.png)
