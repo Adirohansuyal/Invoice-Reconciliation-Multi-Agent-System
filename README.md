@@ -325,23 +325,16 @@ For invoices escalated to human review, an additional LLM-generated explanation 
 
 ## Contributing
 
-Contributions are welcome! Please follow these guidelines:
-
-1. Fork the repository
-2. Create a feature branch (`git checkout -b feature/AmazingFeature`)
-3. Commit your changes (`git commit -m 'Add some AmazingFeature'`)
-4. Push to the branch (`git push origin feature/AmazingFeature`)
-5. Open a Pull Request
-
+Contributions are welcome! 
 ## License
 
 This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details.
 
 ---
 
-**Author**: Adu  
+**Author**: Aditya Suyal
 **Purpose**: Agent Development Internship Technical Assessment  
-**Contact**: [Your Email/LinkedIn]
+**Contact**: https://www.linkedin.com/in/aditya-suyal/
 
 ---
 
