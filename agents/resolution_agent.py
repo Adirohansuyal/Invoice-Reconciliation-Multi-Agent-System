@@ -7,7 +7,16 @@ def resolution_agent(state):
 
     # Rule 1: Missing or invalid PO number
     if not po_number or str(po_number).strip().lower() in ["n/a", "na", "none", "null", ""]:
+        issues.append({
+            "type": "MISSING_PO",
+            "po_value": po_number,
+            "confidence": 0.95,
+            "severity": "CRITICAL"
+        })
+
+        state["issues"] = issues
         state["decision"] = "ESCALATE_TO_HUMAN"
+
         state["reasoning"].append(
             f"[ResolutionAgent] Invoice PO is missing or invalid ('{po_number}'). Escalating."
         )
@@ -15,7 +24,15 @@ def resolution_agent(state):
 
     # Rule 2: Low match confidence
     if match_conf < 0.6:
+        issues.append({
+            "type": "LOW_MATCH_CONFIDENCE",
+            "confidence": match_conf,
+            "severity": "HIGH"
+        })
+
+        state["issues"] = issues
         state["decision"] = "ESCALATE_TO_HUMAN"
+
         state["reasoning"].append(
             f"[ResolutionAgent] PO match confidence too low ({match_conf:.2f}). Escalating."
         )
