@@ -7,9 +7,7 @@ from graph import build_graph
 from llm import call_llm
 
 
-# -------------------------------
-# Page Config
-# -------------------------------
+
 st.set_page_config(
     page_title="Invoice Reconciliation AI",
     page_icon="📄",
