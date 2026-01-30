@@ -1,8 +1,8 @@
+streamlit
+langgraph
 groq
 python-dotenv
-pytesseract
-opencv-python
-pillow
 rapidfuzz
+pytesseract
 pdf2image
-langgraph
+Pillow
