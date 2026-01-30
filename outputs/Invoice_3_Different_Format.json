@@ -1,0 +1,94 @@
+{
+  "file_name": "Invoice_3_Different_Format.pdf",
+  "decision": "AUTO_APPROVE",
+  "invoice": {
+    "invoice_no": "MC-INV-3421",
+    "supplier": "MedChem Ingredients Ltd",
+    "po_number": "PO-2024-003",
+    "items": [
+      {
+        "description": "Pregelatinized Starch MC-584",
+        "quantity": 200,
+        "unit_price": 6.75,
+        "total": 1350.0
+      },
+      {
+        "description": "Gelatin Type A 200 Bloom MC-215",
+        "quantity": 50,
+        "unit_price": 45.0,
+        "total": 2250.0
+      },
+      {
+        "description": "Lactose Monohydrate Mesh 200 MC-376",
+        "quantity": 150,
+        "unit_price": 11.2,
+        "total": 1680.0
+      },
+      {
+        "description": "Croscarmellose Sodium MC-492",
+        "quantity": 30,
+        "unit_price": 28.5,
+        "total": 855.0
+      }
+    ],
+    "total": 7362.0
+  },
+  "matched_po": {
+    "po_number": "PO-2024-003",
+    "supplier": "MedChem Ingredients",
+    "date": "2024-01-15",
+    "total": 7362.0,
+    "currency": "GBP",
+    "line_items": [
+      {
+        "item_id": "MC-215",
+        "description": "Gelatin Type A 200 Bloom",
+        "quantity": 50,
+        "unit": "kg",
+        "unit_price": 45.0,
+        "line_total": 2250.0
+      },
+      {
+        "item_id": "MC-376",
+        "description": "Lactose Monohydrate Mesh 200",
+        "quantity": 150,
+        "unit": "kg",
+        "unit_price": 11.2,
+        "line_total": 1680.0
+      },
+      {
+        "item_id": "MC-584",
+        "description": "Pregelatinized Starch",
+        "quantity": 200,
+        "unit": "kg",
+        "unit_price": 6.75,
+        "line_total": 1350.0
+      },
+      {
+        "item_id": "MC-492",
+        "description": "Croscarmellose Sodium",
+        "quantity": 30,
+        "unit": "kg",
+        "unit_price": 28.5,
+        "line_total": 855.0
+      }
+    ]
+  },
+  "match_confidence": 0.99,
+  "issues": [],
+  "reasoning": [
+    "[DocumentAgent] Extracted invoice. InvoiceNo=MC-INV-3421, PO=PO-2024-003, Items=4",
+    "[MatchingAgent] Exact PO number match found: PO-2024-003 (confidence=0.99)",
+    "[DiscrepancyAgent] Comparing prices for 'Pregelatinized Starch MC-584': invoice_price=6.75, po_price=6.75",
+    "[DiscrepancyAgent] Comparing quantities for 'Pregelatinized Starch MC-584': invoice_qty=200.0, po_qty=200.0",
+    "[DiscrepancyAgent] Comparing prices for 'Gelatin Type A 200 Bloom MC-215': invoice_price=45.0, po_price=45.0",
+    "[DiscrepancyAgent] Comparing quantities for 'Gelatin Type A 200 Bloom MC-215': invoice_qty=50.0, po_qty=50.0",
+    "[DiscrepancyAgent] Comparing prices for 'Lactose Monohydrate Mesh 200 MC-376': invoice_price=11.2, po_price=11.2",
+    "[DiscrepancyAgent] Comparing quantities for 'Lactose Monohydrate Mesh 200 MC-376': invoice_qty=150.0, po_qty=150.0",
+    "[DiscrepancyAgent] Comparing prices for 'Croscarmellose Sodium MC-492': invoice_price=28.5, po_price=28.5",
+    "[DiscrepancyAgent] Comparing quantities for 'Croscarmellose Sodium MC-492': invoice_qty=30.0, po_qty=30.0",
+    "[DiscrepancyAgent] Comparison complete. No discrepancies found.",
+    "[ResolutionAgent] No issues and high confidence. Auto-approving invoice."
+  ],
+  "human_explanation": null
+}

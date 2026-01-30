@@ -1,0 +1,101 @@
+{
+  "file_name": "Invoice_5_Missing_PO.pdf",
+  "decision": "ESCALATE_TO_HUMAN",
+  "invoice": {
+    "invoice_no": "EC-7721",
+    "supplier": "EuroChem Trading Ltd",
+    "po_number": "N/A",
+    "items": [
+      {
+        "description": "Mannitol Granular USP",
+        "quantity": 120,
+        "unit_price": 14.5,
+        "total": 1740
+      },
+      {
+        "description": "Talc Pharma Grade",
+        "quantity": 60,
+        "unit_price": 8.8,
+        "total": 528
+      },
+      {
+        "description": "Colloidal Silicon Dioxide",
+        "quantity": 25,
+        "unit_price": 35,
+        "total": 875
+      },
+      {
+        "description": "Hypromellose 2910",
+        "quantity": 80,
+        "unit_price": 18.75,
+        "total": 1500
+      }
+    ],
+    "total": 4643
+  },
+  "matched_po": {
+    "po_number": "PO-2024-005",
+    "supplier": "EuroChem Trading Ltd",
+    "date": "2024-01-22",
+    "total": 5571.6,
+    "currency": "GBP",
+    "line_items": [
+      {
+        "item_id": "EC-M-440",
+        "description": "Mannitol Granular USP",
+        "quantity": 120,
+        "unit": "kg",
+        "unit_price": 14.5,
+        "line_total": 1740.0
+      },
+      {
+        "item_id": "EC-T-892",
+        "description": "Talc Pharma Grade",
+        "quantity": 60,
+        "unit": "kg",
+        "unit_price": 8.8,
+        "line_total": 528.0
+      },
+      {
+        "item_id": "EC-S-225",
+        "description": "Colloidal Silicon Dioxide",
+        "quantity": 25,
+        "unit": "kg",
+        "unit_price": 35.0,
+        "line_total": 875.0
+      },
+      {
+        "item_id": "EC-H-667",
+        "description": "Hypromellose 2910",
+        "quantity": 80,
+        "unit": "kg",
+        "unit_price": 18.75,
+        "line_total": 1500.0
+      }
+    ]
+  },
+  "match_confidence": 1.0,
+  "issues": [
+    {
+      "type": "MISSING_PO",
+      "po_value": "N/A",
+      "confidence": 0.95,
+      "severity": "CRITICAL"
+    }
+  ],
+  "reasoning": [
+    "[DocumentAgent] Extracted invoice. InvoiceNo=EC-7721, PO=N/A, Items=4",
+    "[MatchingAgent] No direct PO match. Best fuzzy match = PO-2024-005 with score=798.499361430396, confidence=1.00",
+    "[DiscrepancyAgent] Comparing prices for 'Mannitol Granular USP': invoice_price=14.5, po_price=14.5",
+    "[DiscrepancyAgent] Comparing quantities for 'Mannitol Granular USP': invoice_qty=120.0, po_qty=120.0",
+    "[DiscrepancyAgent] Comparing prices for 'Talc Pharma Grade': invoice_price=8.8, po_price=8.8",
+    "[DiscrepancyAgent] Comparing quantities for 'Talc Pharma Grade': invoice_qty=60.0, po_qty=60.0",
+    "[DiscrepancyAgent] Comparing prices for 'Colloidal Silicon Dioxide': invoice_price=35.0, po_price=35.0",
+    "[DiscrepancyAgent] Comparing quantities for 'Colloidal Silicon Dioxide': invoice_qty=25.0, po_qty=25.0",
+    "[DiscrepancyAgent] Comparing prices for 'Hypromellose 2910': invoice_price=18.75, po_price=18.75",
+    "[DiscrepancyAgent] Comparing quantities for 'Hypromellose 2910': invoice_qty=80.0, po_qty=80.0",
+    "[DiscrepancyAgent] Comparison complete. No discrepancies found.",
+    "[ResolutionAgent] Invoice PO is missing or invalid ('N/A'). Escalating."
+  ],
+  "human_explanation": "```json\n{\n  \"reason\": \"Missing or invalid Purchase Order (PO)\",\n  \"description\": \"The invoice PO is either missing or invalid, which requires human review to verify the order details.\"\n}\n```"
+}

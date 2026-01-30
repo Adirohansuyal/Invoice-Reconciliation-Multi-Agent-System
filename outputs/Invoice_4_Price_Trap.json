@@ -1,0 +1,88 @@
+{
+  "file_name": "Invoice_4_Price_Trap.pdf",
+  "decision": "ESCALATE_TO_HUMAN",
+  "invoice": {
+    "invoice_no": "GPS-8842",
+    "supplier": "Global Pharma Supply Co.",
+    "po_number": "PO-2024-004",
+    "items": [
+      {
+        "description": "Ibuprofen BP 200mg",
+        "quantity": 100,
+        "unit_price": 88.0,
+        "total": 8800.0
+      },
+      {
+        "description": "Povidone K30 USP",
+        "quantity": 75,
+        "unit_price": 22.0,
+        "total": 1650.0
+      },
+      {
+        "description": "Sodium Starch Glycolate",
+        "quantity": 40,
+        "unit_price": 19.5,
+        "total": 780.0
+      }
+    ],
+    "total": 13476.0
+  },
+  "matched_po": {
+    "po_number": "PO-2024-004",
+    "supplier": "Global Pharma Supply Co.",
+    "date": "2024-01-18",
+    "total": 13176.0,
+    "currency": "GBP",
+    "line_items": [
+      {
+        "item_id": "GPS-A101",
+        "description": "Ibuprofen BP 200mg",
+        "quantity": 100,
+        "unit": "kg",
+        "unit_price": 80.0,
+        "line_total": 8000.0
+      },
+      {
+        "item_id": "GPS-E045",
+        "description": "Povidone K30 USP",
+        "quantity": 75,
+        "unit": "kg",
+        "unit_price": 22.0,
+        "line_total": 1650.0
+      },
+      {
+        "item_id": "GPS-E067",
+        "description": "Sodium Starch Glycolate",
+        "quantity": 40,
+        "unit": "kg",
+        "unit_price": 19.5,
+        "line_total": 780.0
+      }
+    ]
+  },
+  "match_confidence": 0.99,
+  "issues": [
+    {
+      "type": "PRICE_MISMATCH",
+      "item": "Ibuprofen BP 200mg",
+      "invoice_price": 88.0,
+      "po_price": 80.0,
+      "confidence": 0.95
+    }
+  ],
+  "reasoning": [
+    "[DocumentAgent] Extracted invoice. InvoiceNo=GPS-8842, PO=PO-2024-004, Items=3",
+    "[MatchingAgent] Exact PO number match found: PO-2024-004 (confidence=0.99)",
+    "[DiscrepancyAgent] Comparing prices for 'Ibuprofen BP 200mg': invoice_price=88.0, po_price=80.0",
+    "[DiscrepancyAgent] PRICE_MISMATCH detected for 'Ibuprofen BP 200mg'.",
+    "[DiscrepancyAgent] Comparing quantities for 'Ibuprofen BP 200mg': invoice_qty=100.0, po_qty=100.0",
+    "[DiscrepancyAgent] Comparing prices for 'Povidone K30 USP': invoice_price=22.0, po_price=22.0",
+    "[DiscrepancyAgent] Comparing quantities for 'Povidone K30 USP': invoice_qty=75.0, po_qty=75.0",
+    "[DiscrepancyAgent] Comparing prices for 'Sodium Starch Glycolate': invoice_price=19.5, po_price=19.5",
+    "[DiscrepancyAgent] Comparing quantities for 'Sodium Starch Glycolate': invoice_qty=40.0, po_qty=40.0",
+    "[DiscrepancyAgent] Comparison complete. Detected 1 issues: ['PRICE_MISMATCH']",
+    "[ResolutionAgent] Critical issue detected (PRICE_MISMATCH). Escalating to human.",
+    "[HumanReviewAgent] Human reviewer confirms escalation due to price mismatch."
+  ],
+  "human_explanation": "```json\n{\n  \"reason\": \"Price mismatch detected for 'Ibuprofen BP 200mg' between invoice price ($88.00) and PO price ($80.00)\",\n  \"issue_type\": \"PRICE_MISMATCH\",\n  \"item\": \"Ibuprofen BP 200mg\"\n}\n```"
+}

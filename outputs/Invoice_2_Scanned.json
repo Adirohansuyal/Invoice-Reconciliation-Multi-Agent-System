@@ -1,0 +1,78 @@
+{
+  "file_name": "Invoice_2_Scanned.pdf",
+  "decision": "AUTO_APPROVE",
+  "invoice": {
+    "invoice_no": "BA-2024-2156",
+    "supplier": "BioActive Materials UK",
+    "po_number": "PO-2024-002",
+    "items": [
+      {
+        "description": "Ascorbic Acid USP",
+        "quantity": 75,
+        "unit_price": 32.0,
+        "total": 2400.0
+      },
+      {
+        "description": "Citric Acid Anhydrous",
+        "quantity": 100,
+        "unit_price": 12.5,
+        "total": 1250.0
+      },
+      {
+        "description": "Sodium Benzoate",
+        "quantity": 50,
+        "unit_price": 15.8,
+        "total": 790.0
+      }
+    ],
+    "total": 5328.0
+  },
+  "matched_po": {
+    "po_number": "PO-2024-002",
+    "supplier": "BioActive Materials UK",
+    "date": "2024-01-12",
+    "total": 5328.0,
+    "currency": "GBP",
+    "line_items": [
+      {
+        "item_id": "BIO-751",
+        "description": "Ascorbic Acid USP",
+        "quantity": 75,
+        "unit": "kg",
+        "unit_price": 32.0,
+        "line_total": 2400.0
+      },
+      {
+        "item_id": "BIO-822",
+        "description": "Citric Acid Anhydrous",
+        "quantity": 100,
+        "unit": "kg",
+        "unit_price": 12.5,
+        "line_total": 1250.0
+      },
+      {
+        "item_id": "BIO-943",
+        "description": "Sodium Benzoate",
+        "quantity": 50,
+        "unit": "kg",
+        "unit_price": 15.8,
+        "line_total": 790.0
+      }
+    ]
+  },
+  "match_confidence": 0.99,
+  "issues": [],
+  "reasoning": [
+    "[DocumentAgent] Extracted invoice. InvoiceNo=BA-2024-2156, PO=PO-2024-002, Items=3",
+    "[MatchingAgent] Exact PO number match found: PO-2024-002 (confidence=0.99)",
+    "[DiscrepancyAgent] Comparing prices for 'Ascorbic Acid USP': invoice_price=32.0, po_price=32.0",
+    "[DiscrepancyAgent] Comparing quantities for 'Ascorbic Acid USP': invoice_qty=75.0, po_qty=75.0",
+    "[DiscrepancyAgent] Comparing prices for 'Citric Acid Anhydrous': invoice_price=12.5, po_price=12.5",
+    "[DiscrepancyAgent] Comparing quantities for 'Citric Acid Anhydrous': invoice_qty=100.0, po_qty=100.0",
+    "[DiscrepancyAgent] Comparing prices for 'Sodium Benzoate': invoice_price=15.8, po_price=15.8",
+    "[DiscrepancyAgent] Comparing quantities for 'Sodium Benzoate': invoice_qty=50.0, po_qty=50.0",
+    "[DiscrepancyAgent] Comparison complete. No discrepancies found.",
+    "[ResolutionAgent] No issues and high confidence. Auto-approving invoice."
+  ],
+  "human_explanation": null
+}

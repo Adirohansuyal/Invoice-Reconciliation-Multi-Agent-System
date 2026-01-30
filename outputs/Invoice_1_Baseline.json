@@ -1,0 +1,94 @@
+{
+  "file_name": "Invoice_1_Baseline.pdf",
+  "decision": "AUTO_APPROVE",
+  "invoice": {
+    "invoice_no": "INV-2024-1001",
+    "supplier": "PharmaChem Supplies Ltd",
+    "po_number": "PO-2024-001",
+    "items": [
+      {
+        "description": "Paracetamol BP 500mg",
+        "quantity": 50,
+        "unit_price": 125.0,
+        "total": 6250.0
+      },
+      {
+        "description": "Microcrystalline Cellulose",
+        "quantity": 100,
+        "unit_price": 8.5,
+        "total": 850.0
+      },
+      {
+        "description": "Magnesium Stearate Ph Eur",
+        "quantity": 25,
+        "unit_price": 24.0,
+        "total": 600.0
+      },
+      {
+        "description": "Titanium Dioxide E171",
+        "quantity": 15,
+        "unit_price": 18.5,
+        "total": 277.5
+      }
+    ],
+    "total": 9573.0
+  },
+  "matched_po": {
+    "po_number": "PO-2024-001",
+    "supplier": "PharmaChem Supplies Ltd",
+    "date": "2024-01-10",
+    "total": 9573.0,
+    "currency": "GBP",
+    "line_items": [
+      {
+        "item_id": "API-001",
+        "description": "Paracetamol BP 500mg",
+        "quantity": 50,
+        "unit": "kg",
+        "unit_price": 125.0,
+        "line_total": 6250.0
+      },
+      {
+        "item_id": "EXC-023",
+        "description": "Microcrystalline Cellulose",
+        "quantity": 100,
+        "unit": "kg",
+        "unit_price": 8.5,
+        "line_total": 850.0
+      },
+      {
+        "item_id": "EXC-045",
+        "description": "Magnesium Stearate Ph Eur",
+        "quantity": 25,
+        "unit": "kg",
+        "unit_price": 24.0,
+        "line_total": 600.0
+      },
+      {
+        "item_id": "COL-012",
+        "description": "Titanium Dioxide E171",
+        "quantity": 15,
+        "unit": "kg",
+        "unit_price": 18.5,
+        "line_total": 277.5
+      }
+    ]
+  },
+  "match_confidence": 0.99,
+  "issues": [],
+  "reasoning": [
+    "[DocumentAgent] Extracted invoice. InvoiceNo=INV-2024-1001, PO=PO-2024-001, Items=4",
+    "[MatchingAgent] Exact PO number match found: PO-2024-001 (confidence=0.99)",
+    "[DiscrepancyAgent] Comparing prices for 'Paracetamol BP 500mg': invoice_price=125.0, po_price=125.0",
+    "[DiscrepancyAgent] Comparing quantities for 'Paracetamol BP 500mg': invoice_qty=50.0, po_qty=50.0",
+    "[DiscrepancyAgent] Comparing prices for 'Microcrystalline Cellulose': invoice_price=8.5, po_price=8.5",
+    "[DiscrepancyAgent] Comparing quantities for 'Microcrystalline Cellulose': invoice_qty=100.0, po_qty=100.0",
+    "[DiscrepancyAgent] Comparing prices for 'Magnesium Stearate Ph Eur': invoice_price=24.0, po_price=24.0",
+    "[DiscrepancyAgent] Comparing quantities for 'Magnesium Stearate Ph Eur': invoice_qty=25.0, po_qty=25.0",
+    "[DiscrepancyAgent] Comparing prices for 'Titanium Dioxide E171': invoice_price=18.5, po_price=18.5",
+    "[DiscrepancyAgent] Comparing quantities for 'Titanium Dioxide E171': invoice_qty=15.0, po_qty=15.0",
+    "[DiscrepancyAgent] Comparison complete. No discrepancies found.",
+    "[ResolutionAgent] No issues and high confidence. Auto-approving invoice."
+  ],
+  "human_explanation": null
+}

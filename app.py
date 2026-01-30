@@ -6,8 +6,6 @@ import base64
 from graph import build_graph
 from llm import call_llm
 
-
-
 st.set_page_config(
     page_title="Invoice Reconciliation AI",
     page_icon="📄",
@@ -17,20 +15,12 @@ st.set_page_config(
 st.title("📄 Multi-Agent Invoice Reconciliation System")
 st.caption("Real-time agent orchestration • Explainable decisions • Human-in-the-loop")
 
-
-# -------------------------------
-# Load PO DB
-# -------------------------------
 with open("purchase_orders.json") as f:
     po_db = json.load(f)
 
 # Build LangGraph app
 agent_app = build_graph()
 
-
-# -------------------------------
-# Sidebar
-# -------------------------------
 st.sidebar.header("⚙️ Controls")
 uploaded_files = st.sidebar.file_uploader(
     "Upload Invoices (PDF)",
@@ -44,10 +34,6 @@ st.sidebar.success("✅ AUTO_APPROVE")
 st.sidebar.warning("⚠️ REQUEST_CLARIFICATION")
 st.sidebar.error("🚨 ESCALATE_TO_HUMAN")
 
-
-# -------------------------------
-# Helper Functions
-# -------------------------------
 def render_message(msg: str):
     if msg.startswith("[DocumentAgent]"):
         color = "#1E88E5"
@@ -79,7 +65,6 @@ def render_message(msg: str):
         unsafe_allow_html=True
     )
 
-
 def show_pdf(path):
     with open(path, "rb") as f:
         base64_pdf = base64.b64encode(f.read()).decode("utf-8")
@@ -94,7 +79,6 @@ def show_pdf(path):
     """
     st.markdown(pdf_display, unsafe_allow_html=True)
 
-
 def llm_explain(final_state):
     prompt = f"""
 You are an AI accounting assistant.
@@ -106,7 +90,6 @@ Reasoning trace: {final_state.get("reasoning")}
 In 3–5 lines, explain clearly and simply why this invoice requires human review.
 """
     return call_llm(prompt)
-
 
 def save_output_json(file_name, final_state, human_explanation=None):
     os.makedirs("outputs", exist_ok=True)
@@ -130,23 +113,16 @@ def save_output_json(file_name, final_state, human_explanation=None):
 
     return output_path
 
-
-# -------------------------------
-# Main Logic
-# -------------------------------
 if uploaded_files:
-
     st.subheader("📤 Uploaded Files")
     for f in uploaded_files:
         st.write("•", f.name)
 
     if st.button("🚀 Process All Invoices"):
-
         auto_approved = []
         needs_human = []
 
         for uploaded_file in uploaded_files:
-
             # Save to temp file
             with tempfile.NamedTemporaryFile(delete=False, suffix=".pdf") as tmp:
                 tmp.write(uploaded_file.read())
@@ -163,10 +139,7 @@ if uploaded_files:
             }
 
             final_state = None
-
-            # -------------------------------
-            # Stream LangGraph execution
-            # -------------------------------
+            
             for event in agent_app.stream(state):
                 if not isinstance(event, dict):
                     continue
@@ -181,10 +154,7 @@ if uploaded_files:
                 "file_path": tmp_path,
                 "final_state": final_state
             }
-
-            # -------------------------------
-            # Save output JSON + classify
-            # -------------------------------
+            
             if decision == "AUTO_APPROVE":
                 output_path = save_output_json(
                     uploaded_file.name,
@@ -205,18 +175,12 @@ if uploaded_files:
                 record["output_path"] = output_path
 
                 needs_human.append(record)
-
-        # -------------------------------
-        # Display Results in Tabs
-        # -------------------------------
+        
         tab1, tab2 = st.tabs([
             f"✅ Auto Approved ({len(auto_approved)})",
             f"🧑‍⚖️ Needs Human Review ({len(needs_human)})"
         ])
-
-        # -------------------------------
-        # Auto Approved Tab
-        # -------------------------------
+        
         with tab1:
             if not auto_approved:
                 st.success("No auto-approved invoices.")
@@ -240,10 +204,7 @@ if uploaded_files:
                     st.json(rec["final_state"].get("invoice", {}))
 
                     st.caption(f"💾 Output saved to: `{rec['output_path']}`")
-
-        # -------------------------------
-        # Human Review Tab
-        # -------------------------------
+        
         with tab2:
             if not needs_human:
                 st.success("No invoices need human review.")
