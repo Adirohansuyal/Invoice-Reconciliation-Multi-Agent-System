@@ -1,7 +1,7 @@
 from groq import Groq
 
 # ⚠️ HARDCODED API KEY (REMOVE BEFORE PUSHING TO GITHUB)
-GROQ_API_KEY = "YOUR_GROQ_API_KEY"
+GROQ_API_KEY = "YOUR_GROQ_API"
 
 client = Groq(api_key=GROQ_API_KEY)
 
