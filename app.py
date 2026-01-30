@@ -2,10 +2,10 @@ import streamlit as st
 import os
 import json
 import tempfile
-import time
 import base64
 from graph import build_graph
 from llm import call_llm
+
 
 # -------------------------------
 # Page Config
@@ -19,6 +19,7 @@ st.set_page_config(
 st.title("📄 Multi-Agent Invoice Reconciliation System")
 st.caption("Real-time agent orchestration • Explainable decisions • Human-in-the-loop")
 
+
 # -------------------------------
 # Load PO DB
 # -------------------------------
@@ -27,6 +28,7 @@ with open("purchase_orders.json") as f:
 
 # Build LangGraph app
 agent_app = build_graph()
+
 
 # -------------------------------
 # Sidebar
@@ -41,11 +43,12 @@ uploaded_files = st.sidebar.file_uploader(
 st.sidebar.markdown("---")
 st.sidebar.markdown("### Decision Legend")
 st.sidebar.success("✅ AUTO_APPROVE")
-st.sidebar.warning("⚠️REQUEST_CLARIFICATION")
+st.sidebar.warning("⚠️ REQUEST_CLARIFICATION")
 st.sidebar.error("🚨 ESCALATE_TO_HUMAN")
 
+
 # -------------------------------
-# Helpers
+# Helper Functions
 # -------------------------------
 def render_message(msg: str):
     if msg.startswith("[DocumentAgent]"):
@@ -78,13 +81,21 @@ def render_message(msg: str):
         unsafe_allow_html=True
     )
 
+
 def show_pdf(path):
     with open(path, "rb") as f:
         base64_pdf = base64.b64encode(f.read()).decode("utf-8")
+
     pdf_display = f"""
-    <iframe src="data:application/pdf;base64,{base64_pdf}" width="100%" height="600px" type="application/pdf"></iframe>
+    <iframe
+        src="data:application/pdf;base64,{base64_pdf}"
+        width="100%"
+        height="600px"
+        type="application/pdf">
+    </iframe>
     """
     st.markdown(pdf_display, unsafe_allow_html=True)
+
 
 def llm_explain(final_state):
     prompt = f"""
@@ -94,20 +105,44 @@ Invoice decision: {final_state.get("decision")}
 Issues: {final_state.get("issues")}
 Reasoning trace: {final_state.get("reasoning")}
 
-In 3-5 lines, explain clearly and simply why this invoice requires human review.
+In 3–5 lines, explain clearly and simply why this invoice requires human review.
 """
     return call_llm(prompt)
+
+
+def save_output_json(file_name, final_state, human_explanation=None):
+    os.makedirs("outputs", exist_ok=True)
+
+    payload = {
+        "file_name": file_name,
+        "decision": final_state.get("decision"),
+        "invoice": final_state.get("invoice"),
+        "matched_po": final_state.get("matched_po"),
+        "match_confidence": final_state.get("match_confidence"),
+        "issues": final_state.get("issues"),
+        "reasoning": final_state.get("reasoning"),
+        "human_explanation": human_explanation
+    }
+
+    base_name = os.path.splitext(file_name)[0]
+    output_path = os.path.join("outputs", f"{base_name}.json")
+
+    with open(output_path, "w") as f:
+        json.dump(payload, f, indent=2)
+
+    return output_path
+
 
 # -------------------------------
 # Main Logic
 # -------------------------------
 if uploaded_files:
 
-    st.subheader("Uploaded Files")
+    st.subheader("📤 Uploaded Files")
     for f in uploaded_files:
         st.write("•", f.name)
 
-    if st.button(" Process All Invoices"):
+    if st.button("🚀 Process All Invoices"):
 
         auto_approved = []
         needs_human = []
@@ -120,7 +155,7 @@ if uploaded_files:
                 tmp_path = tmp.name
 
             status = st.empty()
-            status.info(f"Processing {uploaded_file.name}...")
+            status.info(f"🤖 Processing {uploaded_file.name}...")
 
             # Initial state
             state = {
@@ -130,28 +165,17 @@ if uploaded_files:
             }
 
             final_state = None
-            last_reasoning_len = 0
-            chat_history = []
 
             # -------------------------------
-            # STREAM GRAPH
+            # Stream LangGraph execution
             # -------------------------------
             for event in agent_app.stream(state):
-
                 if not isinstance(event, dict):
                     continue
-
-                current_state = list(event.values())[0]
-                reasoning = current_state.get("reasoning", [])
-
-                if len(reasoning) > last_reasoning_len:
-                    last_reasoning_len = len(reasoning)
-
-                final_state = current_state
+                final_state = list(event.values())[0]
 
             status.success(f"✅ Finished {uploaded_file.name}")
 
-            # Classify
             decision = final_state.get("decision")
 
             record = {
@@ -160,16 +184,32 @@ if uploaded_files:
                 "final_state": final_state
             }
 
+            # -------------------------------
+            # Save output JSON + classify
+            # -------------------------------
             if decision == "AUTO_APPROVE":
+                output_path = save_output_json(
+                    uploaded_file.name,
+                    final_state
+                )
+                record["output_path"] = output_path
                 auto_approved.append(record)
+
             else:
-                # Generate LLM explanation
                 explanation = llm_explain(final_state)
                 record["human_explanation"] = explanation
+
+                output_path = save_output_json(
+                    uploaded_file.name,
+                    final_state,
+                    human_explanation=explanation
+                )
+                record["output_path"] = output_path
+
                 needs_human.append(record)
 
         # -------------------------------
-        # DISPLAY RESULTS IN TABS
+        # Display Results in Tabs
         # -------------------------------
         tab1, tab2 = st.tabs([
             f"✅ Auto Approved ({len(auto_approved)})",
@@ -177,11 +217,12 @@ if uploaded_files:
         ])
 
         # -------------------------------
-        # TAB 1: AUTO APPROVED
+        # Auto Approved Tab
         # -------------------------------
         with tab1:
             if not auto_approved:
                 st.success("No auto-approved invoices.")
+
             for rec in auto_approved:
                 st.markdown("---")
                 st.header(f"📄 {rec['file_name']}")
@@ -197,15 +238,18 @@ if uploaded_files:
                     for msg in rec["final_state"]["reasoning"]:
                         render_message(msg)
 
-                    st.subheader("Final Extracted Invoice")
+                    st.subheader("🧾 Extracted Invoice")
                     st.json(rec["final_state"].get("invoice", {}))
 
+                    st.caption(f"💾 Output saved to: `{rec['output_path']}`")
+
         # -------------------------------
-        # TAB 2: NEEDS HUMAN
+        # Human Review Tab
         # -------------------------------
         with tab2:
             if not needs_human:
                 st.success("No invoices need human review.")
+
             for rec in needs_human:
                 st.markdown("---")
                 st.header(f"📄 {rec['file_name']}")
@@ -221,12 +265,14 @@ if uploaded_files:
                     for msg in rec["final_state"]["reasoning"]:
                         render_message(msg)
 
-                    st.subheader("LLM Explanation")
+                    st.subheader("🤖 LLM Explanation")
                     st.info(rec["human_explanation"])
 
                     st.subheader("⚠️ Issues")
                     for issue in rec["final_state"].get("issues", []):
                         st.json(issue)
+
+                    st.caption(f"💾 Output saved to: `{rec['output_path']}`")
 
 else:
     st.info("👈 Upload one or more invoice PDFs from the sidebar to begin.")
