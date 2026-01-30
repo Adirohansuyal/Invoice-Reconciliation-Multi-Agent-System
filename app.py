@@ -5,6 +5,7 @@ import tempfile
 import base64
 from graph import build_graph
 from llm import call_llm
+from pdf2image import convert_from_path
 
 st.set_page_config(
     page_title="Invoice Reconciliation AI",
@@ -66,18 +67,27 @@ def render_message(msg: str):
     )
 
 def show_pdf(path):
-    with open(path, "rb") as f:
-        base64_pdf = base64.b64encode(f.read()).decode("utf-8")
+    try:
+        images = convert_from_path(
+            path,
+            dpi=200,          # controls clarity
+            first_page=1,
+            last_page=1
+        )
 
-    pdf_display = f"""
-    <iframe
-        src="data:application/pdf;base64,{base64_pdf}"
-        width="100%"
-        height="600px"
-        type="application/pdf">
-    </iframe>
-    """
-    st.markdown(pdf_display, unsafe_allow_html=True)
+        if images:
+            st.image(
+                images[0],
+                use_container_width=True,
+                caption="Invoice Preview (Page 1)"
+            )
+        else:
+            st.warning("Unable to render PDF preview.")
+
+    except Exception as e:
+        st.error(f"PDF preview failed: {e}")
+
+
 
 def llm_explain(final_state):
     prompt = f"""

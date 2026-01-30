@@ -84,5 +84,5 @@
     "[ResolutionAgent] Critical issue detected (PRICE_MISMATCH). Escalating to human.",
     "[HumanReviewAgent] Human reviewer confirms escalation due to price mismatch."
   ],
-  "human_explanation": "```json\n{\n  \"reason\": \"Price mismatch detected for 'Ibuprofen BP 200mg' between invoice price ($88.00) and PO price ($80.00)\",\n  \"issue_type\": \"PRICE_MISMATCH\",\n  \"item\": \"Ibuprofen BP 200mg\"\n}\n```"
+  "human_explanation": "```json\n{\n  \"reason\": \"Price mismatch detected for 'Ibuprofen BP 200mg' between invoice price ($88.00) and purchase order price ($80.00).\",\n  \"issue_type\": \"PRICE_MISMATCH\",\n  \"item\": \"Ibuprofen BP 200mg\"\n}\n```"
 }

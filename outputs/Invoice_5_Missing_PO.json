@@ -10,28 +10,28 @@
         "description": "Mannitol Granular USP",
         "quantity": 120,
         "unit_price": 14.5,
-        "total": 1740
+        "total": 1740.0
       },
       {
         "description": "Talc Pharma Grade",
         "quantity": 60,
         "unit_price": 8.8,
-        "total": 528
+        "total": 528.0
       },
       {
         "description": "Colloidal Silicon Dioxide",
         "quantity": 25,
-        "unit_price": 35,
-        "total": 875
+        "unit_price": 35.0,
+        "total": 875.0
       },
       {
         "description": "Hypromellose 2910",
         "quantity": 80,
         "unit_price": 18.75,
-        "total": 1500
+        "total": 1500.0
       }
     ],
-    "total": 4643
+    "total": 4643.0
   },
   "matched_po": {
     "po_number": "PO-2024-005",
@@ -97,5 +97,5 @@
     "[DiscrepancyAgent] Comparison complete. No discrepancies found.",
     "[ResolutionAgent] Invoice PO is missing or invalid ('N/A'). Escalating."
   ],
-  "human_explanation": "```json\n{\n  \"reason\": \"Missing or invalid Purchase Order (PO)\",\n  \"description\": \"The invoice PO is either missing or invalid, which requires human review to verify the order details.\"\n}\n```"
+  "human_explanation": "```json\n{\n  \"reason\": \"Missing Purchase Order (PO)\",\n  \"description\": \"The invoice PO is missing or invalid, requiring human review to verify the order details.\"\n}\n```"
 }
