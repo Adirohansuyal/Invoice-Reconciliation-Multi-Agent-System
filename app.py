@@ -15,11 +15,10 @@ st.set_page_config(
     layout="wide"
 )
 
-st.markdown("## 📄 Multi-Agent Invoice Reconciliation System")
+st.title("📄 Multi-Agent Invoice Reconciliation System")
 st.caption(
     "Real-time agent orchestration • Explainable decisions • Human-in-the-loop review"
 )
-
 st.markdown("---")
 
 # --------------------------------------------------
@@ -33,7 +32,7 @@ agent_app = build_graph()
 # --------------------------------------------------
 # Sidebar
 # --------------------------------------------------
-st.sidebar.markdown("## ⚙️ Controls")
+st.sidebar.header("⚙️ Controls")
 
 uploaded_files = st.sidebar.file_uploader(
     "Upload invoice PDFs",
@@ -68,7 +67,7 @@ def render_message(msg: str):
         f"""
         <div style="
             border-left: 4px solid {color};
-            padding: 8px 12px;
+            padding: 6px 10px;
             margin-bottom: 6px;
             background-color: rgba(255,255,255,0.03);
             border-radius: 6px;
@@ -97,29 +96,48 @@ def show_pdf(path):
         st.error(f"PDF preview failed: {e}")
 
 
-def llm_explain(final_state):
+# --------------------------------------------------
+# LLM Explanations
+# --------------------------------------------------
+def llm_summary(final_state):
     prompt = f"""
-You are an AI accounting assistant.
+You are an AI finance operations assistant.
 
-Invoice decision: {final_state.get("decision")}
+Write a short, clear 1–2 sentence explanation in natural language
+explaining WHY this invoice received the given decision.
+
+Decision: {final_state.get("decision")}
 Issues: {final_state.get("issues")}
 Reasoning trace: {final_state.get("reasoning")}
 
-Explain in 3–5 concise lines why this invoice requires human review.
+Do not mention confidence scores or internal system details.
 """
     return call_llm(prompt)
 
 
-def save_output_json(file_name, final_state, human_explanation=None):
+def llm_human_explain(final_state):
+    prompt = f"""
+You are an AI accounting assistant.
+
+Explain in 3–5 clear sentences why this invoice requires human review.
+
+Decision: {final_state.get("decision")}
+Issues: {final_state.get("issues")}
+Reasoning trace: {final_state.get("reasoning")}
+"""
+    return call_llm(prompt)
+
+
+def save_output_json(file_name, final_state, summary, human_explanation=None):
     os.makedirs("outputs", exist_ok=True)
     payload = {
         "file_name": file_name,
         "decision": final_state.get("decision"),
         "invoice": final_state.get("invoice"),
         "matched_po": final_state.get("matched_po"),
-        "match_confidence": final_state.get("match_confidence"),
         "issues": final_state.get("issues"),
         "reasoning": final_state.get("reasoning"),
+        "summary": summary,
         "human_explanation": human_explanation
     }
     base = os.path.splitext(file_name)[0]
@@ -128,12 +146,29 @@ def save_output_json(file_name, final_state, human_explanation=None):
         json.dump(payload, f, indent=2)
     return path
 
+
+def render_summary(rec):
+    decision = rec["final_state"].get("decision", "UNKNOWN")
+
+    if decision == "AUTO_APPROVE":
+        st.success("✅ AUTO APPROVED")
+    elif decision == "REQUEST_CLARIFICATION":
+        st.warning("⚠️ NEEDS CLARIFICATION")
+    else:
+        st.error("🚨 HUMAN REVIEW REQUIRED")
+
+    # ✅ ONLY NATURAL LANGUAGE
+    st.markdown(rec["summary"])
+
+    st.caption(f"Output saved to: `{rec.get('output_path')}`")
+
+
 # --------------------------------------------------
 # Main Flow
 # --------------------------------------------------
 if uploaded_files:
 
-    st.markdown("### 📤 Uploaded Invoices")
+    st.subheader("📤 Uploaded Invoices")
     for f in uploaded_files:
         st.markdown(f"- **{f.name}**")
 
@@ -165,24 +200,27 @@ if uploaded_files:
 
             status.update(label="Processing complete", state="complete")
 
+            summary = llm_summary(final_state)
+
             record = {
                 "file_name": uploaded_file.name,
                 "file_path": tmp_path,
-                "final_state": final_state
+                "final_state": final_state,
+                "summary": summary
             }
 
             decision = final_state.get("decision")
 
             if decision == "AUTO_APPROVE":
                 record["output_path"] = save_output_json(
-                    uploaded_file.name, final_state
+                    uploaded_file.name, final_state, summary
                 )
                 auto_approved.append(record)
             else:
-                explanation = llm_explain(final_state)
+                explanation = llm_human_explain(final_state)
                 record["human_explanation"] = explanation
                 record["output_path"] = save_output_json(
-                    uploaded_file.name, final_state, explanation
+                    uploaded_file.name, final_state, summary, explanation
                 )
                 needs_human.append(record)
 
@@ -199,23 +237,26 @@ if uploaded_files:
                 st.success("No invoices were auto-approved.")
             for rec in auto_approved:
                 st.markdown("---")
-                st.markdown(f"### 📄 {rec['file_name']}")
+                st.subheader(f"📄 {rec['file_name']}")
+                render_summary(rec)
+
                 left, right = st.columns([1, 1])
                 with left:
                     show_pdf(rec["file_path"])
                 with right:
                     st.markdown("#### 🧠 Agent Reasoning")
-                    with st.container(height=280):
+                    with st.container(height=260):
                         for msg in rec["final_state"]["reasoning"]:
                             render_message(msg)
-                    st.caption(f"💾 Output saved to `{rec['output_path']}`")
 
         with tab2:
             if not needs_human:
                 st.success("No invoices require human review.")
             for rec in needs_human:
                 st.markdown("---")
-                st.markdown(f"### 📄 {rec['file_name']}")
+                st.subheader(f"📄 {rec['file_name']}")
+                render_summary(rec)
+
                 left, right = st.columns([1, 1])
                 with left:
                     show_pdf(rec["file_path"])
@@ -224,12 +265,13 @@ if uploaded_files:
                     with st.container(height=220):
                         for msg in rec["final_state"]["reasoning"]:
                             render_message(msg)
-                    st.markdown("#### 🤖 AI Explanation")
+
+                    st.markdown("#### 🤖 Human Review Explanation")
                     st.info(rec["human_explanation"])
+
                     st.markdown("#### ⚠️ Issues")
                     for issue in rec["final_state"].get("issues", []):
                         st.json(issue)
-                    st.caption(f"💾 Output saved to `{rec['output_path']}`")
 
 else:
     st.info("👈 Upload one or more invoice PDFs from the sidebar to begin.")
