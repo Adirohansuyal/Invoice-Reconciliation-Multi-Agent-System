@@ -2,6 +2,7 @@ import streamlit as st
 import os
 import json
 import tempfile
+import hashlib
 from graph import build_graph
 from llm import call_llm
 from pdf2image import convert_from_path
@@ -45,6 +46,18 @@ st.sidebar.markdown("### 📌 Decision Legend")
 st.sidebar.success("✅ AUTO_APPROVE")
 st.sidebar.warning("⚠️ REQUEST_CLARIFICATION")
 st.sidebar.error("🚨 ESCALATE_TO_HUMAN")
+
+# --------------------------------------------------
+# Utility: Stable hash for caching
+# --------------------------------------------------
+def hash_state_for_llm(final_state: dict) -> str:
+    relevant = {
+        "decision": final_state.get("decision"),
+        "issues": final_state.get("issues"),
+        "reasoning": final_state.get("reasoning"),
+    }
+    serialized = json.dumps(relevant, sort_keys=True)
+    return hashlib.sha256(serialized.encode()).hexdigest()
 
 # --------------------------------------------------
 # UI Helpers
@@ -95,9 +108,8 @@ def show_pdf(path):
     except Exception as e:
         st.error(f"PDF preview failed: {e}")
 
-
 # --------------------------------------------------
-# LLM Explanations
+# LLM Explanations (CACHED)
 # --------------------------------------------------
 def llm_summary(final_state):
     prompt = f"""
@@ -128,6 +140,18 @@ Reasoning trace: {final_state.get("reasoning")}
     return call_llm(prompt)
 
 
+@st.cache_data(show_spinner=False)
+def llm_summary_cached(state_hash: str, final_state: dict) -> str:
+    return llm_summary(final_state)
+
+
+@st.cache_data(show_spinner=False)
+def llm_human_explain_cached(state_hash: str, final_state: dict) -> str:
+    return llm_human_explain(final_state)
+
+# --------------------------------------------------
+# Persistence
+# --------------------------------------------------
 def save_output_json(file_name, final_state, summary, human_explanation=None):
     os.makedirs("outputs", exist_ok=True)
     payload = {
@@ -146,7 +170,9 @@ def save_output_json(file_name, final_state, summary, human_explanation=None):
         json.dump(payload, f, indent=2)
     return path
 
-
+# --------------------------------------------------
+# Rendering summary (NO HTML, NO DIV)
+# --------------------------------------------------
 def render_summary(rec):
     decision = rec["final_state"].get("decision", "UNKNOWN")
 
@@ -157,11 +183,8 @@ def render_summary(rec):
     else:
         st.error("🚨 HUMAN REVIEW REQUIRED")
 
-    # ✅ ONLY NATURAL LANGUAGE
     st.markdown(rec["summary"])
-
     st.caption(f"Output saved to: `{rec.get('output_path')}`")
-
 
 # --------------------------------------------------
 # Main Flow
@@ -200,7 +223,9 @@ if uploaded_files:
 
             status.update(label="Processing complete", state="complete")
 
-            summary = llm_summary(final_state)
+            # ---- Cached LLM explanations ----
+            state_hash = hash_state_for_llm(final_state)
+            summary = llm_summary_cached(state_hash, final_state)
 
             record = {
                 "file_name": uploaded_file.name,
@@ -217,7 +242,7 @@ if uploaded_files:
                 )
                 auto_approved.append(record)
             else:
-                explanation = llm_human_explain(final_state)
+                explanation = llm_human_explain_cached(state_hash, final_state)
                 record["human_explanation"] = explanation
                 record["output_path"] = save_output_json(
                     uploaded_file.name, final_state, summary, explanation
