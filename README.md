@@ -37,7 +37,7 @@ This multi-agent system automates 80-90% of invoice reconciliation workflows whi
 
 The system also includes a professional review dashboard that mirrors real enterprise workflows by separating automatically approved invoices from those requiring human intervention, complete with PDF previews, agent reasoning traces, and AI-generated explanations for escalations.
 
-## Key Features
+## Key Features 
 
 - **Intelligent Document Processing**  
   OCR-based extraction combined with LLM-powered structuring to handle scanned PDFs, rotated documents, and heterogeneous invoice templates.
@@ -77,7 +77,7 @@ The system also includes a professional review dashboard that mirrors real enter
 - **Fault-Tolerant Design**  
   Graceful handling of OCR failures, LLM parsing errors, missing data, and ambiguous matches without system crashes.
 
-### Decision Outcomes
+### Decision Outcomes of the System
 
 - **AUTO_APPROVE**: Clean matches with no material discrepancies
 - **REQUEST_CLARIFICATION**: Minor issues requiring supplier follow-up
