@@ -19,7 +19,7 @@ An intelligent, production-ready multi-agent system for automated invoice reconc
 - [Contributing](#contributing)
 - [License](#license)
 
-## Overview
+## Overview of the System
 
 This system automates invoice reconciliation workflows by leveraging a multi-agent architecture to process supplier invoices, match them against purchase orders, detect discrepancies, and make intelligent approval decisions. The system handles real-world document complexity including scanned PDFs, varied formats, and incomplete data.
 
