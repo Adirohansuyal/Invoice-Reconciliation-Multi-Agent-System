@@ -6,3 +6,5 @@ rapidfuzz
 pytesseract
 pdf2image
 Pillow
+dotenv
+pandas
