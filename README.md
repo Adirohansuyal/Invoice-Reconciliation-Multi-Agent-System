@@ -130,7 +130,7 @@ The system includes a review layer that categorizes invoices into operational qu
   Invoices with critical discrepancies, missing PO references, or low confidence scores.
 
 Invoices routed to human review are accompanied by:
-- Original PDF preview
+- Original PDF preview available
 - Full agent reasoning trace
 - AI-generated explanation summarizing the escalation rationale
 
