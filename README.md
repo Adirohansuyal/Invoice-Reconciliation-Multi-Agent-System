@@ -202,7 +202,7 @@ sudo apt-get install tesseract-ocr poppler-utils
 
 ### Python Dependencies
 
-```bash
+```bash commands
 # Clone the repository
 git clone <repository-url>
 cd invoice_project
