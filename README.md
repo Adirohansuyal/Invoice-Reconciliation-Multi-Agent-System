@@ -121,7 +121,7 @@ The system also includes a professional review dashboard that mirrors real enter
 
 ### Review & Decision Layer
 
-The system includes a review layer that categorizes invoices into operational queues:
+This system includes a review layer that categorizes invoices into operational queues, which are listed below:
 
 - **Auto-Approved Queue**  
   Invoices with high-confidence matches and no material discrepancies.
