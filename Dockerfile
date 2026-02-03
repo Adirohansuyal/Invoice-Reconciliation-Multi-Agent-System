@@ -4,7 +4,7 @@
     FROM python:3.10-slim
 
     # -------------------------------
-    # System dependencies (OCR + PDF)
+    # System dependencies 
     # -------------------------------
     RUN apt-get update && apt-get install -y \
         poppler-utils \
