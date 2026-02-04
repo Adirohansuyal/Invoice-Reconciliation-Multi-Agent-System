@@ -1,0 +1,2 @@
+Red (for old): #800000 
+Green (for new): #1C4E38

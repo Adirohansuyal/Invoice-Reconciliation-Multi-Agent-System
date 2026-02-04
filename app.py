@@ -195,7 +195,7 @@ with events_col:
     st.header("Version History")
     st.markdown(
         """
-        <div style="background-color: #1C4E38; color: white; padding: 1em; border-radius: 10px;">
+        <div style="background-color: #800000 ; color: white; padding: 1em; border-radius: 10px;">
         
         **v1.2 - Feb 04, 2026**
         - Added CI gated-secured CD Deployment Feature.
