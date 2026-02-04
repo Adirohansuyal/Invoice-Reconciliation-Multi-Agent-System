@@ -13,6 +13,7 @@ jobs:
     runs-on: ubuntu-latest
 
     env:
+      # Dummy key so LLM imports don't crash in CI
       GROQ_API_KEY: "ci_dummy_key"
 
     steps:
@@ -35,6 +36,10 @@ jobs:
           pip install -r requirements.txt
           pip install pytest
 
+      # 🔑 CRITICAL FIX (this was missing before)
+      - name: Set PYTHONPATH
+        run: echo "PYTHONPATH=$(pwd)" >> $GITHUB_ENV
+
       - name: Run tests
         run: pytest -v
 
@@ -45,7 +50,7 @@ jobs:
     name: CD - Deploy to Render
     runs-on: ubuntu-latest
 
-    # 🔑 THIS IS THE KEY LINE
+    # 🚨 CD runs ONLY if CI passes
     needs: test
 
     steps:
