@@ -192,7 +192,7 @@ def render_summary(rec):
 main_col, events_col = st.columns([3, 1])
 
 with events_col:
-    st.header("Version Histroy")
+    st.header("Version History")
     st.markdown(
         """
         <div style="background-color: #1C4E38; color: white; padding: 1em; border-radius: 10px;">
