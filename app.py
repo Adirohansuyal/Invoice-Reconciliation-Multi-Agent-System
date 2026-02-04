@@ -198,7 +198,7 @@ with events_col:
         <div style="background-color: #1C4E38; color: white; padding: 1em; border-radius: 10px;">
         
         **v1.2 - Feb 04, 2026**
-        - Add News Updation Column.
+        - Added CI gated-secured CD Deployment Feature.
         - Improved scalability by deploying using Docker containers.
 
         **v1.1 - Jan 29, 2026**
