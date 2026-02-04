@@ -186,9 +186,9 @@ def render_summary(rec):
     st.markdown(rec["summary"])
     st.caption(f"Output saved to: `{rec.get('output_path')}`")
 
-# --------------------------------------------------
+
 # Main Flow
-# --------------------------------------------------
+
 main_col, events_col = st.columns([3, 1])
 
 with events_col:
