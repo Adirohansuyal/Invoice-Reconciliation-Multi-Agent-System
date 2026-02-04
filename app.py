@@ -36,13 +36,13 @@ agent_app = build_graph()
 st.sidebar.header("⚙️ Controls")
 
 uploaded_files = st.sidebar.file_uploader(
-    "Upload invoice PDFs",
+    "Upload invoice PDFs here",
     type=["pdf"],
     accept_multiple_files=True
 )
 
 st.sidebar.markdown("---")
-st.sidebar.markdown("### 📌 Decision Legend")
+st.sidebar.markdown("### Decision Legend")
 st.sidebar.success("✅ AUTO_APPROVE")
 st.sidebar.warning("⚠️ REQUEST_CLARIFICATION")
 st.sidebar.error("🚨 ESCALATE_TO_HUMAN")
@@ -189,114 +189,139 @@ def render_summary(rec):
 # --------------------------------------------------
 # Main Flow
 # --------------------------------------------------
-if uploaded_files:
+main_col, events_col = st.columns([3, 1])
 
-    st.subheader("📤 Uploaded Invoices")
-    for f in uploaded_files:
-        st.markdown(f"- **{f.name}**")
+with events_col:
+    st.header("Version Histroy")
+    st.markdown(
+        """
+        <div style="background-color: #1C4E38; color: white; padding: 1em; border-radius: 10px;">
+        
+        **v1.2 - Feb 04, 2026**
+        - Add News Updation Column.
+        - Improved scalability by deploying using Docker containers.
 
-    if st.button("🚀 Process Invoices", use_container_width=True):
+        **v1.1 - Jan 29, 2026**
+        - Price trap detection logic improved.
+        - Better OCR for scanned documents.
 
-        auto_approved, needs_human = [], []
+        </div>
+        """,
+        unsafe_allow_html=True
+    )
+    st.markdown("---")
+    st.info("Check back here for news and updates on the app!")
 
-        for uploaded_file in uploaded_files:
 
-            with tempfile.NamedTemporaryFile(delete=False, suffix=".pdf") as tmp:
-                tmp.write(uploaded_file.read())
-                tmp_path = tmp.name
+with main_col:
+    if uploaded_files:
 
-            status = st.status(
-                f"Processing **{uploaded_file.name}**",
-                expanded=False
-            )
+        st.subheader("📤 Uploaded Invoices")
+        for f in uploaded_files:
+            st.markdown(f"- **{f.name}**")
 
-            state = {
-                "file_path": tmp_path,
-                "po_db": po_db,
-                "reasoning": []
-            }
+        if st.button("🚀 Process Invoices", use_container_width=True):
 
-            final_state = None
-            for event in agent_app.stream(state):
-                if isinstance(event, dict):
-                    final_state = list(event.values())[0]
+            auto_approved, needs_human = [], []
 
-            status.update(label="Processing complete", state="complete")
+            for uploaded_file in uploaded_files:
 
-            # ---- Cached LLM explanations ----
-            state_hash = hash_state_for_llm(final_state)
-            summary = llm_summary_cached(state_hash, final_state)
+                with tempfile.NamedTemporaryFile(delete=False, suffix=".pdf") as tmp:
+                    tmp.write(uploaded_file.read())
+                    tmp_path = tmp.name
 
-            record = {
-                "file_name": uploaded_file.name,
-                "file_path": tmp_path,
-                "final_state": final_state,
-                "summary": summary
-            }
-
-            decision = final_state.get("decision")
-
-            if decision == "AUTO_APPROVE":
-                record["output_path"] = save_output_json(
-                    uploaded_file.name, final_state, summary
+                status = st.status(
+                    f"Processing **{uploaded_file.name}**",
+                    expanded=False
                 )
-                auto_approved.append(record)
-            else:
-                explanation = llm_human_explain_cached(state_hash, final_state)
-                record["human_explanation"] = explanation
-                record["output_path"] = save_output_json(
-                    uploaded_file.name, final_state, summary, explanation
-                )
-                needs_human.append(record)
 
-        # --------------------------------------------------
-        # Results Tabs
-        # --------------------------------------------------
-        tab1, tab2 = st.tabs([
-            f"✅ Auto Approved ({len(auto_approved)})",
-            f"🧑‍⚖️ Needs Human Review ({len(needs_human)})"
-        ])
+                state = {
+                    "file_path": tmp_path,
+                    "po_db": po_db,
+                    "reasoning": []
+                }
 
-        with tab1:
-            if not auto_approved:
-                st.success("No invoices were auto-approved.")
-            for rec in auto_approved:
-                st.markdown("---")
-                st.subheader(f"📄 {rec['file_name']}")
-                render_summary(rec)
+                final_state = None
+                for event in agent_app.stream(state):
+                    if isinstance(event, dict):
+                        final_state = list(event.values())[0]
 
-                left, right = st.columns([1, 1])
-                with left:
-                    show_pdf(rec["file_path"])
-                with right:
-                    st.markdown("#### 🧠 Agent Reasoning")
-                    with st.container(height=260):
-                        for msg in rec["final_state"]["reasoning"]:
-                            render_message(msg)
+                status.update(label="Processing complete", state="complete")
 
-        with tab2:
-            if not needs_human:
-                st.success("No invoices require human review.")
-            for rec in needs_human:
-                st.markdown("---")
-                st.subheader(f"📄 {rec['file_name']}")
-                render_summary(rec)
+                # ---- Cached LLM explanations ----
+                state_hash = hash_state_for_llm(final_state)
+                summary = llm_summary_cached(state_hash, final_state)
 
-                left, right = st.columns([1, 1])
-                with left:
-                    show_pdf(rec["file_path"])
-                with right:
-                    st.markdown("#### 🧠 Agent Reasoning")
-                    with st.container(height=220):
-                        for msg in rec["final_state"]["reasoning"]:
-                            render_message(msg)
+                record = {
+                    "file_name": uploaded_file.name,
+                    "file_path": tmp_path,
+                    "final_state": final_state,
+                    "summary": summary
+                }
 
-                    st.markdown("#### 🤖 Human Review Explanation")
-                    st.info(rec["human_explanation"])
+                decision = final_state.get("decision")
 
-                    st.markdown("#### ⚠️ Issues")
-                    for issue in rec["final_state"].get("issues", []):
-                        st.json(issue)
+                if decision == "AUTO_APPROVE":
+                    record["output_path"] = save_output_json(
+                        uploaded_file.name, final_state, summary
+                    )
+                    auto_approved.append(record)
+                else:
+                    explanation = llm_human_explain_cached(state_hash, final_state)
+                    record["human_explanation"] = explanation
+                    record["output_path"] = save_output_json(
+                        uploaded_file.name, final_state, summary, explanation
+                    )
+                    needs_human.append(record)
 
-else:
-    st.info("👈 Upload one or more invoice PDFs from the sidebar to begin.")
+            # --------------------------------------------------
+            # Results Tabs
+            # --------------------------------------------------
+            tab1, tab2 = st.tabs([
+                f"✅ Auto Approved ({len(auto_approved)})",
+                f"🧑‍⚖️ Needs Human Review ({len(needs_human)})"
+            ])
+
+            with tab1:
+                if not auto_approved:
+                    st.success("No invoices were auto-approved.")
+                for rec in auto_approved:
+                    st.markdown("---")
+                    st.subheader(f"📄 {rec['file_name']}")
+                    render_summary(rec)
+
+                    left, right = st.columns([1, 1])
+                    with left:
+                        show_pdf(rec["file_path"])
+                    with right:
+                        st.markdown("#### 🧠 Agent Reasoning")
+                        with st.container(height=260):
+                            for msg in rec["final_state"]["reasoning"]:
+                                render_message(msg)
+
+            with tab2:
+                if not needs_human:
+                    st.success("No invoices require human review.")
+                for rec in needs_human:
+                    st.markdown("---")
+                    st.subheader(f"📄 {rec['file_name']}")
+                    render_summary(rec)
+
+                    left, right = st.columns([1, 1])
+                    with left:
+                        show_pdf(rec["file_path"])
+                    with right:
+                        st.markdown("#### 🧠 Agent Reasoning")
+                        with st.container(height=220):
+                            for msg in rec["final_state"]["reasoning"]:
+                                render_message(msg)
+
+                        st.markdown("#### 🤖 Human Review Explanation")
+                        st.info(rec["human_explanation"])
+
+                        st.markdown("#### ⚠️ Issues")
+                        for issue in rec["final_state"].get("issues", []):
+                            st.json(issue)
+
+    else:
+        st.info("👈 Upload one or more invoice PDFs from the sidebar to begin.")
