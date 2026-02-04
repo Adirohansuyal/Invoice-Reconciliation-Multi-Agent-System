@@ -16,7 +16,7 @@ st.set_page_config(
     layout="wide"
 )
 
-st.title("📄 Multi-Agent Invoice Reconciliation System")
+st.title("📄 Advanced Multi-Agent Invoice Reconciliation System")
 st.caption(
     "Real-time agent orchestration • Explainable decisions • Human-in-the-loop review"
 )
