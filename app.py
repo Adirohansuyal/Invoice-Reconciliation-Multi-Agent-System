@@ -3,6 +3,7 @@ import os
 import json
 import tempfile
 import hashlib
+import time
 from graph import build_graph
 from llm import call_llm
 from pdf2image import convert_from_path
@@ -422,28 +423,46 @@ with main_col:
                     "reasoning": []
                 }
 
+                nodes = ["document", "matching", "discrepancy", "resolution", "human_review"]
+                total_steps = len(nodes)
                 final_state = None
-                step_count = 0
-                total_steps = 5  # Approximate number of agent steps
-                
+                current_progress = 0
+
                 for event in agent_app.stream(state):
                     if isinstance(event, dict):
-                        final_state = list(event.values())[0]
-                        step_count += 1
-                        progress = min(step_count / total_steps, 1.0)
-                        progress_bar.progress(progress)
-                        
-                        # Update status text based on reasoning
-                        if final_state.get("reasoning"):
-                            latest_msg = final_state["reasoning"][-1]
-                            if "[DocumentAgent]" in latest_msg:
-                                status_text.markdown("📄 **Extracting invoice data...**")
-                            elif "[MatchingAgent]" in latest_msg:
-                                status_text.markdown("🔍 **Matching purchase orders...**")
-                            elif "[DiscrepancyAgent]" in latest_msg:
-                                status_text.markdown("⚠️ **Analyzing discrepancies...**")
-                            elif "[ResolutionAgent]" in latest_msg:
-                                status_text.markdown("✅ **Making final decision...**")
+                        # Check if the event is from a node
+                        if len(event) == 1 and list(event.keys())[0] in nodes:
+                            node_name = list(event.keys())[0]
+                            
+                            # Update progress
+                            step = nodes.index(node_name) + 1
+                            target_progress = step / total_steps
+                            
+                            # Animate the progress bar
+                            for p in range(int(current_progress * 100), int(target_progress * 100)):
+                                progress_bar.progress(p / 100)
+                                time.sleep(0.01)
+                            current_progress = target_progress
+                            
+                            # The output of the node is the new state
+                            final_state = list(event.values())[0]
+                            
+                            # Update status text
+                            if final_state.get("reasoning"):
+                                latest_msg = final_state["reasoning"][-1]
+                                if "[DocumentAgent]" in latest_msg:
+                                    status_text.markdown("📄 **Extracting invoice data...**")
+                                elif "[MatchingAgent]" in latest_msg:
+                                    status_text.markdown("🔍 **Matching purchase orders...**")
+                                elif "[DiscrepancyAgent]" in latest_msg:
+                                    status_text.markdown("⚠️ **Analyzing discrepancies...**")
+                                elif "[ResolutionAgent]" in latest_msg:
+                                    status_text.markdown("✅ **Making final decision...**")
+                                elif "[HumanReviewAgent]" in latest_msg:
+                                    status_text.markdown("👤 **Flagging for human review...**")
+                        else:
+                            # This is likely the final aggregated state at the end.
+                            final_state = event
 
                 # Complete the progress bar for this file
                 progress_bar.progress(1.0)
