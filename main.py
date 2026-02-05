@@ -1,4 +1,5 @@
 import os, json
+from tqdm import tqdm
 from graph import build_graph
 
 with open("purchase_orders.json") as f:
@@ -6,10 +7,9 @@ with open("purchase_orders.json") as f:
 
 app = build_graph()
 
-for file in os.listdir("invoices"):
-    if not file.endswith(".pdf"):
-        continue
+invoice_files = [f for f in os.listdir("invoices") if f.endswith(".pdf")]
 
+for file in tqdm(invoice_files, desc="Processing Invoices"):
     state = {
         "file_path": os.path.join("invoices", file),
         "po_db": po_db,
