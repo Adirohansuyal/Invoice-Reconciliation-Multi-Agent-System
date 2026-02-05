@@ -412,6 +412,7 @@ with main_col:
                 with status_container.container():
                     st.markdown(f"🔄 Processing **{uploaded_file.name}** ({i+1}/{len(uploaded_files)})")
                 
+                # Individual file progress (0% to 100% for each file)
                 progress_bar = progress_container.progress(0)
                 status_text = status_text_container.empty()
 
@@ -444,6 +445,7 @@ with main_col:
                             elif "[ResolutionAgent]" in latest_msg:
                                 status_text.markdown("✅ **Making final decision...**")
 
+                # Complete the progress bar for this file
                 progress_bar.progress(1.0)
                 status_text.markdown(f"✅ **{uploaded_file.name} completed!**")
 
