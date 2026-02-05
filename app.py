@@ -411,7 +411,7 @@ with main_col:
 
                 # Update the single status area
                 with status_container.container():
-                    st.markdown(f"🔄 Processing **{uploaded_file.name}** ({i+1}/{len(uploaded_files)})")
+                    st.markdown(f'<div style="display: flex; align-items: center;"><div style="width: 20px; height: 20px; border: 2px solid #f3f3f3; border-top: 2px solid #3498db; border-radius: 50%; animation: spin 1s linear infinite; margin-right: 10px;"></div>Processing <strong>{uploaded_file.name}</strong> ({i+1}/{len(uploaded_files)})</div><style>@keyframes spin {{ 0% {{ transform: rotate(0deg); }} 100% {{ transform: rotate(360deg); }} }}</style>', unsafe_allow_html=True)
                 
                 # Individual file progress (0% to 100% for each file)
                 progress_bar = progress_container.progress(0)
