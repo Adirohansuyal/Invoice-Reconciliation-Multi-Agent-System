@@ -33,7 +33,7 @@ agent_app = build_graph()
 # --------------------------------------------------
 # Sidebar
 # --------------------------------------------------
-st.sidebar.header("⚙️ Controls")
+st.sidebar.header("Control Centre")
 
 uploaded_files = st.sidebar.file_uploader(
     "Upload invoice PDFs here",
@@ -192,7 +192,7 @@ def render_summary(rec):
 main_col, events_col = st.columns([3, 1])
 
 with events_col:
-    st.header("Version History")
+    st.subheader("Version History")
     st.markdown(
         """
         <div style="background-color: #800000 ; color: white; padding: 1em; border-radius: 10px;">
