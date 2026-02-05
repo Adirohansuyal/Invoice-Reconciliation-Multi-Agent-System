@@ -434,14 +434,16 @@ with main_col:
                         if len(event) == 1 and list(event.keys())[0] in nodes:
                             node_name = list(event.keys())[0]
                             
-                            # Update progress
+                            # Update progress gradually
                             step = nodes.index(node_name) + 1
                             target_progress = step / total_steps
                             
-                            # Animate the progress bar
-                            for p in range(int(current_progress * 100), int(target_progress * 100)):
-                                progress_bar.progress(p / 100)
-                                time.sleep(0.01)
+                            # Smooth progress animation
+                            steps_to_animate = max(1, int((target_progress - current_progress) * 100))
+                            for i in range(steps_to_animate):
+                                intermediate_progress = current_progress + (target_progress - current_progress) * (i + 1) / steps_to_animate
+                                progress_bar.progress(intermediate_progress)
+                                time.sleep(0.05)  # Slower animation
                             current_progress = target_progress
                             
                             # The output of the node is the new state
