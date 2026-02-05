@@ -205,7 +205,7 @@ with events_col:
                 }
             }
         </style>
-        <div style="background-color: #800000 ; color: white; padding: 1em; border-radius: 10px; border: 3px solid #800000; animation: attention-border 2s ease-in-out infinite;">
+        <div style="background-color: #1C4E38 ; color: white; padding: 1em; border-radius: 10px; border: 3px solid #800000; animation: attention-border 2s ease-in-out infinite;">
         
         **v1.2 - Feb 04, 2026**
         - Added CI gated-secured CD Deployment Feature.

@@ -1,2 +1,20 @@
 Red (for old): #800000 
 Green (for new): #1C4E38
+
+
+
+animation code for new update:
+
+ <style>
+            @keyframes attention-border {
+                0%, 100% {
+                    border-color: #800000;
+                }
+                50% {
+                    border-color: #ff4d4d; /* A brighter, more attention-grabbing red */
+                }
+            }
+        </style>
+
+
+        just above this line:  <div style="background-color: #800000 ; color: white; padding: 1em; border-radius: 10px; border: 3px solid #800000; animation: attention-border 2s ease-in-out infinite;">
