@@ -10,3 +10,4 @@ langgraph
 langchain-core
 rapidfuzz
 groq
+tqdm
