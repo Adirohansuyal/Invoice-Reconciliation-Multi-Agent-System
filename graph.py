@@ -21,7 +21,7 @@ def build_graph():
     graph.add_edge("matching", "discrepancy")
     graph.add_edge("discrepancy", "resolution")
 
-    # Conditional routing
+    # Conditional route
     def need_human_review(state):
         if state.get("match_confidence", 0) < 0.6:
             return "human_review"
@@ -39,5 +39,5 @@ def build_graph():
     )
 
     graph.add_edge("human_review", "__end__")
-
+    # return the compiled graph
     return graph.compile()
